@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kimyo & Biologiya Test Ilovasi</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .app {
+            background: white;
+            width: 95%;
+            max-width: 420px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px #999;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .hidden { display: none; }
+        .timer { font-weight: bold; color: red; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <h2 id="title">Fan tanlang</h2>
+
+    <div id="fanlar">
+        <button onclick="fanTanla('kimyo')">🧪 Kimyo</button>
+        <button onclick="fanTanla('bio')">🌱 Biologiya</button>
+    </div>
+
+    <div id="test" class="hidden">
+        <p class="timer">⏱ <span id="vaqt">30</span> s</p>
+        <p id="savol"></p>
+        <div id="variantlar"></div>
+        <p>Ball: <span id="ball">0</span></p>
+        <button onclick="yangiSavol()">Keyingi savol</button>
+    </div>
+
+    <div id="natija" class="hidden">
+        <h3>Test tugadi 🎉</h3>
+        <p>Yakuniy ball: <span id="yakuniy"></span></p>
+        <button onclick="location.reload()">Qayta boshlash</button>
+    </div>
+</div>
+
+<script>
+let ball = localStorage.getItem("ball") ? Number(localStorage.getItem("ball")) : 0;
+document.getElementById("ball").innerHTML = ball;
+
+let fan = "";
+let vaqt = 30;
+let timer;
+
+let savollar = {
+    kimyo: [
+        { s: "KMnO₄ alken bilan nima qiladi?", v: ["Gaz chiqaradi","Rang yo‘qoladi","Cho‘kma","Yonish"], t: 1 },
+        { s: "Katodda qanday jarayon?", v: ["Oksidlanish","Qaytarilish","Yonish","Eritish"], t: 1 }
+    ],
+    bio: [
+        { s: "Fotosintez qayerda?", v: ["Yadro","Xloroplast","Ribosoma","Mitoxondriya"], t: 1 },
+        { s: "Qonning vazifasi?", v: ["Gaz tashish","Hazm","Ajratish","Harakat"], t: 0 }
+    ]
+};
+
+let hozirgiSavol;
+
+function fanTanla(f) {
+    fan = f;
+    document.getElementById("fanlar").classList.add("hidden");
+    document.getElementById("test").classList.remove("hidden");
+    yangiSavol();
+    timerBoshlash();
+}
+
+function yangiSavol() {
+    vaqt = 30;
+    hozirgiSavol = savollar[fan][Math.floor(Math.random() * savollar[fan].length)];
+    document.getElementById("savol").innerHTML = hozirgiSavol.s;
+    let v = document.getElementById("variantlar");
+    v.innerHTML = "";
+
+    hozirgiSavol.v.forEach((text, i) => {
+        let b = document.createElement("button");
+        b.innerHTML = text;
+        b.onclick = () => tekshir(i);
+        v.appendChild(b);
+    });
+}
+
+function tekshir(i) {
+    if (i === hozirgiSavol.t) {
+        ball++;
+        localStorage.setItem("ball", ball);
+        alert("To‘g‘ri ✅");
+    } else {
+        alert("Noto‘g‘ri ❌");
+    }
+    document.getElementById("ball").innerHTML = ball;
+}
+
+function timerBoshlash() {
+    timer = setInterval(() => {
+        vaqt--;
+        document.getElementById("vaqt").innerHTML = vaqt;
+        if (vaqt === 0) {
+            clearInterval(timer);
+            testTugadi();
+        }
+    }, 1000);
+}
+
+function testTugadi() {
+    document.getElementById("test").classList.add("hidden");
+    document.getElementById("natija").classList.remove("hidden");
+    document.getElementById("yakuniy").innerHTML = ball;
+    localStorage.removeItem("ball");
+}
+</script>
+
+</body>
+</html>
